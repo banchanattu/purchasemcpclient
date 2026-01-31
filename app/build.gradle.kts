@@ -1,13 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
+//    alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "com.chat.purchasemcp"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.chat.purchasemcp"
@@ -32,12 +32,19 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         viewBinding = true
+        compose = true
     }
+
+    // ADD THIS BLOCK - Required for Compose
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"  // Compatible with Kotlin 1.9.x
+    }
+}
+
+kotlin {
+    jvmToolchain(11)
 }
 
 dependencies {
@@ -51,4 +58,32 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.mcp.sdk)
+    testImplementation(kotlin("test"))
+
+    // ADD COMPOSE DEPENDENCIES
+    val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Add these Ktor dependencies
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.cio)
+
+    // Kotlinx serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.activity.compose)
+
+    // Optional but useful
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
