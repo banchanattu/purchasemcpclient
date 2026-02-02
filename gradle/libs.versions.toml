@@ -1,6 +1,7 @@
 [versions]
 activityCompose = "1.12.3"
 agp = "8.13.2"
+junitJunit = "4.13.2"
 kotlin = "2.0.21"
 coreKtx = "1.17.0"
 junit = "4.14-SNAPSHOT"
@@ -31,6 +32,9 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+junit-v4132 = { module = "junit:junit", version.ref = "junitJunit" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit" }
 kotlinx-mcp-sdk = { module = "org.jetbrains.kotlinx:kotlinx-mcp-sdk", version.ref = "kotlinxMcpSdk" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientContentNegotiation" }

@@ -54,16 +54,19 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+
+
     implementation(libs.kotlinx.mcp.sdk)
-    testImplementation(kotlin("test"))
 
     // ADD COMPOSE DEPENDENCIES
     val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
     implementation(composeBom)
-    androidTestImplementation(composeBom)
+
+
+
+
+
+
 
     // Add these Ktor dependencies
     implementation(libs.ktor.client.content.negotiation)
@@ -84,6 +87,25 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.espresso.core)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.kotlin.test)
+    testImplementation(kotlin("test-junit"))
+
+    testImplementation(libs.androidx.junit)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.junit)
+//    testImplementation(libs.junit.v4132)
+    testImplementation(libs.junit)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 }
