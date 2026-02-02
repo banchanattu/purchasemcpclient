@@ -2,6 +2,7 @@ package com.chat.mcp.client
 
 import android.util.Log
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -12,15 +13,19 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.readUTF8Line
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlinx.mcp.client.Client
 import org.jetbrains.kotlinx.mcp.Implementation
 import org.jetbrains.kotlinx.mcp.client.WebSocketClientTransport
+import org.json.JSONArray
+import org.json.JSONObject
 
 
 class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080") {
@@ -80,10 +85,52 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
         return sessionId
     }
 
+
+    private suspend fun  getDataFromBody(response: HttpResponse): JSONObject {
+        val channel = response.bodyAsChannel()
+        while (!channel.isClosedForRead) {
+            val line = channel.readUTF8Line() ?: break
+
+            if (line.startsWith("data:")) {
+                val jsonString = line.removePrefix("data:").trim()
+                // Use your favorite JSON library (Gson/Kotlinx.Serialization)
+                val mcpResponse = JSONObject(jsonString)
+
+//                val mcpResponse = Json.decodeFromString<McpResponse>(jsonString)
+//                println("Found ${mcpResponse.result.tools.size} tools!")
+                return mcpResponse
+            }
+
+        }
+        return JSONObject()
+    }
+
+    private fun getToolsList(jsonObject: JSONObject): List<McpTool> {
+        // 1. Parse the string into a generic JsonObject
+
+
+        // 2. Navigate the hierarchy: result -> tools
+        val result: JSONObject = jsonObject.get("result") as JSONObject
+        val toolsArray = result.get("tools") as? JSONArray
+        val toolsList = mutableListOf<McpTool>()
+        (0 until (toolsArray?.length() ?: 0)).forEach { i ->
+            val tool = toolsArray?.getJSONObject(i)
+            val mcpTool: McpTool = McpTool(
+                name = tool?.getString("name") ?: "",
+                description = tool?.getString("description") ?: "",
+                inputSchema = tool?.getJSONObject("inputSchema") ?: JSONObject()
+            )
+            toolsList.add(mcpTool)
+
+        }
+        // 3. Convert the JsonArray into a List<JsonObject>
+        return toolsList
+    }
+
     /**
      * Step 1: Create a session and get session ID
      */
-    private suspend fun getToolsList(): String {
+    private suspend fun getToolsList(): List<McpTool>  {
         Log.d("MCP", "Creating session...")
 
         val response: HttpResponse = httpClient.post("$baseUrl/mcp") {
@@ -98,8 +145,7 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
             header("mcp-session-id", this@PurchaseMcpClient.sessionId)
             setBody(McpMessageBody().rpc("tools/list"))
         }
-
-        return sessionId
+        return getToolsList(getDataFromBody(response))
     }
 
     /**
