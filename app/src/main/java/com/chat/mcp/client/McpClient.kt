@@ -16,6 +16,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.Parameters
 import io.ktor.http.contentType
 import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
@@ -28,9 +29,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080") {
+class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.194:8080") {
 
-
+    private var sessionId: String = ""
+    private var toolList: List<McpTool> = emptyList()
     private val httpClient: HttpClient = HttpClient(CIO) {
         install(WebSockets)
         install(ContentNegotiation) {
@@ -57,7 +59,7 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
         )
     )
 
-    private var sessionId: String = ""
+
 
     /**
      * Step 1: Create a session and get session ID
@@ -96,8 +98,6 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
                 // Use your favorite JSON library (Gson/Kotlinx.Serialization)
                 val mcpResponse = JSONObject(jsonString)
 
-//                val mcpResponse = Json.decodeFromString<McpResponse>(jsonString)
-//                println("Found ${mcpResponse.result.tools.size} tools!")
                 return mcpResponse
             }
 
@@ -127,6 +127,8 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
         return toolsList
     }
 
+
+
     /**
      * Step 1: Create a session and get session ID
      */
@@ -148,37 +150,39 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
         return getToolsList(getDataFromBody(response))
     }
 
+
+    /**
+     * Step 1: Create a session and get session ID
+     */
+    private suspend fun runTool(toolName : String, id: Int, vararg parameters: Pair<String, String> ): JSONObject  {
+        Log.d("MCP", "Creating session...")
+
+
+
+        val response: HttpResponse = httpClient.post("$baseUrl/mcp") {
+            // 1. Use the dedicated ContentType helper
+            contentType(ContentType.Application.Json)
+            // 2. Add specific headers
+            header(HttpHeaders.Accept, ContentType.Application.Json.toString())
+            header(HttpHeaders.Accept, ContentType.Text.EventStream.toString())
+            header("connection", "keep-alive")
+            header(HttpHeaders.AcceptEncoding, "gzip, deflate, br")
+            header(HttpHeaders.UserAgent, "PurchaseMCPClient/1.0.0")
+            header("mcp-session-id", this@PurchaseMcpClient.sessionId)
+            setBody(McpMessageBody().rpc("tools/call", id, toolName, parameters.toList()))
+        }
+        return response.body()
+    }
+
     /**
      * Step 2: Connect to WebSocket with session ID
      */
     suspend fun connect() {
         try {
-            // Create session first
-//            sessionId = createStreaminSession()
             sessionId = createSession()
+            toolList = getToolsList()
+            val o = runTool("UpdateStore",5, "id" to "402", "storeName" to "Bobby Store 1", "storeDesc" to "Local Purchase")
 
-            val s2 = getToolsList()
-
-            // Build WebSocket URL
-            val wsUrl = baseUrl.replace("http://", "ws://").replace("https://", "wss://") + "/mcp"
-
-            // Create transport with session ID
-            val transport = WebSocketClientTransport(
-                client = httpClient,
-                urlString = wsUrl,
-            ) {
-
-                header("mcp-session-id", this@PurchaseMcpClient.sessionId)
-                header("Accept", "text/event-stream, application/json")
-                header("Sec-WebSocket-Protocol", "mcp")
-            }
-
-            Log.d("MCP", "Connecting to WebSocket with session ID: $sessionId")
-
-            // Connect the MCP client
-            client.connect(transport)
-
-            Log.d("MCP", "Successfully connected to MCP server!")
         } catch (e: Exception) {
             Log.e("MCP", "Connection failed: ${e.message}", e)
             throw e

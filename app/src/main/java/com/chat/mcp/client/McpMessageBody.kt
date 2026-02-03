@@ -70,6 +70,23 @@ class McpMessageBody {
         paramJsonObject.put("clientInfo", clientInfo())
         return paramJsonObject
     }
+
+    fun toolsCallParms(progressToken: Int, name: String, arguments: List<Pair<String, Any>>): JSONObject {
+        val paramsJsonObject = JSONObject()
+        val metaJsonObject = JSONObject()
+        metaJsonObject.put("progressToken", progressToken)
+        paramsJsonObject.put("_meta", metaJsonObject)
+        paramsJsonObject.put("name", name)
+        val argumentsJsonObject = JSONObject()
+        for (i in arguments.indices) {
+            argumentsJsonObject.put( arguments[i].first, arguments[i].second)
+        }
+        paramsJsonObject.put("arguments", argumentsJsonObject)
+//        paramsJsonObject.put("params", paramsJsonObject)
+        return paramsJsonObject
+
+//        {"progressToken":5},"name":"UpdateStore","arguments":{"id":402,"storeName":"Bobby Store","storeDesc":"Local Purchase"}}
+    }
     fun rpc(method: String) : String {
         put("jsonrpc", "2.0")
         put("method", method )
@@ -77,6 +94,13 @@ class McpMessageBody {
         put("params", params())
 
        return this.bodyJson.toString()
+    }
+    fun rpc(method: String, progressToken: Int, name: String, arguments: List<Pair<String, Any>>) : String {
+        put("jsonrpc", "2.0")
+        put("id", progressToken)
+        put("method", method )
+        put("params", toolsCallParms(name = name, progressToken = progressToken, arguments = arguments))
+        return this.bodyJson.toString()
     }
 
 
