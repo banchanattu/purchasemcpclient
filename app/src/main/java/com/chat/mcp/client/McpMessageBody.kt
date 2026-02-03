@@ -71,7 +71,7 @@ class McpMessageBody {
         return paramJsonObject
     }
 
-    fun toolsCallParms(progressToken: Int, name: String, arguments: List<Pair<String, Any>>): JSONObject {
+    fun toolsCallParms(progressToken: Int, name: String, arguments: List<Pair<String, String>>): JSONObject {
         val paramsJsonObject = JSONObject()
         val metaJsonObject = JSONObject()
         metaJsonObject.put("progressToken", progressToken)
@@ -79,7 +79,8 @@ class McpMessageBody {
         paramsJsonObject.put("name", name)
         val argumentsJsonObject = JSONObject()
         for (i in arguments.indices) {
-            argumentsJsonObject.put( arguments[i].first, arguments[i].second)
+            val second = arguments[i].second.toIntOrNull() ?: arguments[i].second
+            argumentsJsonObject.put( arguments[i].first, second )
         }
         paramsJsonObject.put("arguments", argumentsJsonObject)
 //        paramsJsonObject.put("params", paramsJsonObject)
@@ -95,7 +96,7 @@ class McpMessageBody {
 
        return this.bodyJson.toString()
     }
-    fun rpc(method: String, progressToken: Int, name: String, arguments: List<Pair<String, Any>>) : String {
+    fun rpc(method: String, progressToken: Int, name: String, arguments: List<Pair<String, String>>) : String {
         put("jsonrpc", "2.0")
         put("id", progressToken)
         put("method", method )
