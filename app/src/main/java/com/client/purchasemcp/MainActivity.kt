@@ -44,9 +44,28 @@ class MainActivity : AppCompatActivity() {
                     // Chat with OpenAI
                     scope.launch {
                         val response = openAiChat.getModels()
+                        openAiChat.createConversation()
                         // Handle the response as needed
                     }
-                } )
+                },
+                    retrieveChat = {
+                    // Retrieve chat history
+                            scope.launch {
+                                val response = openAiChat.retrieveConversation()
+                                // Implement chat history retrieval
+                            }
+                    },
+                    deleteChat = {
+                        scope.launch {
+                            val response = openAiChat.deleteConversation()
+                        }
+                    },
+                    getItems = {
+                        scope.launch {
+                            val response = openAiChat.getItems()
+                        }
+                    }
+                )
             }
         }
 
