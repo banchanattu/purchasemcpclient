@@ -27,7 +27,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.194:8080") {
+class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080") {
 
     private var sessionId: String = ""
     private var toolList: List<McpTool> = emptyList()

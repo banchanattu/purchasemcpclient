@@ -3,135 +3,84 @@ package com.chat.mcp.client
 import org.json.JSONObject
 
 class McpMessageBody {
-
     private val bodyJson: JSONObject = JSONObject()
 
     fun put(key: String, value: Any): McpMessageBody {
         bodyJson.put(key, value)
         return this
     }
-    fun toJsonString(): String {
-        return bodyJson.toString()
+
+    fun toJsonString(): String = bodyJson.toString()
+
+    fun get(key: String): Any? = bodyJson.opt(key)
+
+    // Reusable JSON builders using apply for cleaner construction
+    private fun clientInfo(): JSONObject = JSONObject().apply {
+        put("name", "Purchase-MCP-client")
+        put("version", "0.19.0")
     }
 
-    fun get(key: String): JSONObject? {
-        return bodyJson.get(key) as JSONObject?
+    private fun tasks(): JSONObject = JSONObject().apply {
+        put("list", JSONObject())
+        put("cancel", JSONObject())
+        put("requests", JSONObject().apply {
+            put("sampling", JSONObject().put("createMessage", JSONObject()))
+            put("elicitation", JSONObject().put("create", JSONObject()))
+        })
     }
 
-    fun clientInfo() : JSONObject {
-        val clientInfoJsonObject = JSONObject()
-        clientInfoJsonObject.put("name", "Purchase-MCP-client")
-        clientInfoJsonObject.put("version", "0.19.0")
-        return clientInfoJsonObject
+    private fun roots(): JSONObject = JSONObject().apply {
+        put("listChanged", true)
     }
 
-    fun tasks(): JSONObject {
-        val tasksJsonObject = JSONObject()
-        tasksJsonObject.put("list", JSONObject())
-        tasksJsonObject.put("cancel", JSONObject())
-
-        val requestsJsonObject = JSONObject()
-            requestsJsonObject.put("sampling", JSONObject().put("createMessage", JSONObject()))
-        val elicitationJsonObject = JSONObject()
-            elicitationJsonObject.put("create", JSONObject())
-            requestsJsonObject.put("elicitation", elicitationJsonObject)
-        tasksJsonObject.put("requests", requestsJsonObject)
-        return tasksJsonObject
-    }
-    fun roots(): JSONObject {
-        val rootJsonObject = JSONObject()
-        rootJsonObject.put("listChanged", true)
-        return rootJsonObject
+    private fun capabilities(): JSONObject = JSONObject().apply {
+        put("sampling", JSONObject())
+        put("elicitation", JSONObject())
+        put("roots", roots())
+        put("tasks", tasks())
     }
 
-//    fun elicitation(): JSONObject {
-//        val elicitationJsonObject = JSONObject()
-//        return elicitationJsonObject
-//    }
-//    fun sampling(): JSONObject {
-//        val samplingJsonObject = JSONObject()
-//        return samplingJsonObject
-//
-//    }
-    fun capabilities(): JSONObject {
-        val capabilitiesJsonObject = JSONObject()
-        capabilitiesJsonObject.put("sampling", JSONObject())
-        capabilitiesJsonObject.put("elicitation", JSONObject())
-        capabilitiesJsonObject.put("roots", roots())
-        capabilitiesJsonObject.put("tasks", tasks())
-        // Add capabilities as needed
-        return capabilitiesJsonObject
+    private fun params(): JSONObject = JSONObject().apply {
+        put("protocolVersion", "2025-11-25")
+        put("capabilities", capabilities())
+        put("clientInfo", clientInfo())
     }
 
-    fun params(): JSONObject {
-        val paramJsonObject = JSONObject()
-        paramJsonObject.put("protocolVersion", "2025-11-25")
-        paramJsonObject.put("capabilities", capabilities())
-        paramJsonObject.put("clientInfo", clientInfo())
-        return paramJsonObject
+    private fun toolsCallParams(
+        progressToken: Int,
+        name: String,
+        arguments: List<Pair<String, String>>
+    ): JSONObject = JSONObject().apply {
+        put("_meta", JSONObject().put("progressToken", progressToken))
+        put("name", name)
+        put("arguments", JSONObject().apply {
+            arguments.forEach { (key, value) ->
+                put(key, value.toIntOrNull() ?: value)
+            }
+        })
     }
 
-    fun toolsCallParms(progressToken: Int, name: String, arguments: List<Pair<String, String>>): JSONObject {
-        val paramsJsonObject = JSONObject()
-        val metaJsonObject = JSONObject()
-        metaJsonObject.put("progressToken", progressToken)
-        paramsJsonObject.put("_meta", metaJsonObject)
-        paramsJsonObject.put("name", name)
-        val argumentsJsonObject = JSONObject()
-        for (i in arguments.indices) {
-            val second = arguments[i].second.toIntOrNull() ?: arguments[i].second
-            argumentsJsonObject.put( arguments[i].first, second )
-        }
-        paramsJsonObject.put("arguments", argumentsJsonObject)
-//        paramsJsonObject.put("params", paramsJsonObject)
-        return paramsJsonObject
-
-//        {"progressToken":5},"name":"UpdateStore","arguments":{"id":402,"storeName":"Bobby Store","storeDesc":"Local Purchase"}}
-    }
-    fun rpc(method: String) : String {
-        put("jsonrpc", "2.0")
-        put("method", method )
-        put("id", 0)
-        put("params", params())
-
-       return this.bodyJson.toString()
-    }
-    fun rpc(method: String, progressToken: Int, name: String, arguments: List<Pair<String, String>>) : String {
-        put("jsonrpc", "2.0")
-        put("id", progressToken)
-        put("method", method )
-        put("params", toolsCallParms(name = name, progressToken = progressToken, arguments = arguments))
-        return this.bodyJson.toString()
+    // Overloaded rpc methods for different use cases
+    fun rpc(method: String): String {
+        return JSONObject().apply {
+            put("jsonrpc", "2.0")
+            put("method", method)
+            put("id", 0)
+            put("params", params())
+        }.toString()
     }
 
-
+    fun rpc(
+        method: String,
+        progressToken: Int,
+        name: String,
+        arguments: List<Pair<String, String>>
+    ): String {
+        return JSONObject().apply {
+            put("jsonrpc", "2.0")
+            put("id", progressToken)
+            put("method", method)
+            put("params", toolsCallParams(progressToken, name, arguments))
+        }.toString()
+    }
 }
-
-private fun JSONObject.add(string: String, put: JSONObject) {}
-
-//        {
-//            "jsonrpc": "2.0",
-//            "id": 0,
-//            "method": "initialize",
-//            "params": {
-//                "protocolVersion": "2025-11-25",
-//                "capabilities": {
-//                    "sampling": {},
-//                    "elicitation": {},
-//                    "roots": { "listChanged": true },
-//                    "tasks": {
-//                        "list": {},
-//                        "cancel": {},
-//                        "requests": {
-//                            "sampling": { "createMessage": {} },
-//                            "elicitation": { "create": {} }
-//                        }
-//                    }
-//                },
-//                "clientInfo": {
-//                    "name": "inspector-client",
-//                    "version": "0.19.0"
-//                }
-//            }
-//        }
-//    """.trimIndent())
