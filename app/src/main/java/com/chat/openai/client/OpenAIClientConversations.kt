@@ -157,6 +157,20 @@ class OpenAIClientConversations {
         httpClient.get("$OPENAI_API_URL/conversations/$conversationId/items")
     }
 
+
+    /**
+     * Create items for  the current conversation.
+     *
+     * @return Result containing the HttpResponse or error
+     * @throws IllegalStateException if no conversation ID is set
+     */
+    suspend fun createItems( items : List<ConversationItem>) : Result<HttpResponse> = runCatching {
+        requireConversationId()
+        httpClient.post("$OPENAI_API_URL/conversations/$conversationId/items") {
+            setBody(createConversationPayload(items))
+        }
+    }
+
     /**
      * Gets the current conversation ID.
      *
