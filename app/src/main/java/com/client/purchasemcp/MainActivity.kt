@@ -1,17 +1,12 @@
 package com.client.purchasemcp
 
-import android.graphics.Path
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.chat.mcp.client.PurchaseMcpClient
-import com.chat.openai.client.OpenAIClient
+import com.chat.openai.client.OpenAIClientConversations
 import com.chat.purchasemcp.BuildConfig
 import kotlinx.coroutines.launch
 
@@ -20,7 +15,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private val purchaseMCPClient: PurchaseMcpClient = PurchaseMcpClient()
-    private val openAiChat : OpenAIClient = OpenAIClient()
+    private val openAiChat : OpenAIClientConversations = OpenAIClientConversations()
 
     private val openaiApiKey = BuildConfig.OPENAI_API_KEY
     private val openaiOrganizationId = BuildConfig.OPENAI_ORGANIZATION_ID

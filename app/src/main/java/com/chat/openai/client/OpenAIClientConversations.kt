@@ -2,7 +2,6 @@ package com.chat.openai.client
 
 import com.chat.purchasemcp.BuildConfig
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.cio.endpoint
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -27,7 +26,7 @@ private val PROJECT_ID: String = BuildConfig.OPENAI_PROJECT_ID
 private val OPENAI_API_URL: String = BuildConfig.OPENAI_API_URL
 
 
-class OpenAIClient(
+class OpenAIClientConversations(
 
 
 ) {
@@ -78,27 +77,11 @@ class OpenAIClient(
         return response
     }
 
-
-    /**
-     * curl https://api.openai.com/v1/conversations \
-     *   -H "Content-Type: application/json" \
-     *   -H "Authorization: Bearer $OPENAI_API_KEY" \
-     *   -d '{
-     *     "metadata": {"topic": "demo"},
-     *     "items": [
-     *       {
-     *         "type": "message",
-     *         "role": "user",
-     *         "content": "Hello!"
-     *       }
-     *     ]
-     *   }'
-     */
     suspend fun createConversation() : HttpResponse {
         val response = httpClient.post("$OPENAI_API_URL/conversations") {
             header("Authorization", "Bearer $OPENAI_API_KEY")
             header("Content-Type", "application/json" )
-            setBody(OpenAIMessageBody().getCreateConversastionBody( userMessage = "Hello!",
+            setBody(OpenAIConversationMessageBody().getCreateConversationBody( userMessage = "Hello!",
                 systemMessage = "You are a helpful assistant.",
                 developerMessage = "This is a demo conversation."))
      }
@@ -112,42 +95,23 @@ class OpenAIClient(
     suspend fun retrieveConversation() : HttpResponse {
         val response = httpClient.get("$OPENAI_API_URL/conversations/$conversationId") {
             header("Authorization", "Bearer $OPENAI_API_KEY")
-//            header("Content-Type", "application/json" )
-//            setBody(OpenAIMessageBody().getCreateConversastionBody( userMessage = "Hello!",
-//                systemMessage = "You are a helpful assistant.",
-//                developerMessage = "This is a demo conversation."))
         }
 
-//        val o = JSONObject(response.bodyAsText())
-//        this.conversationId = o.get("id").toString()
         return response
     }
 
     suspend fun deleteConversation() : HttpResponse {
         val response = httpClient.delete("$OPENAI_API_URL/conversations/$conversationId") {
             header("Authorization", "Bearer $OPENAI_API_KEY")
-//            header("Content-Type", "application/json" )
-//            setBody(OpenAIMessageBody().getCreateConversastionBody( userMessage = "Hello!",
-//                systemMessage = "You are a helpful assistant.",
-//                developerMessage = "This is a demo conversation."))
         }
 
-//        val o = JSONObject(response.bodyAsText())
-//        this.conversationId = o.get("id").toString()
         return response
     }
 
     suspend fun getItems() : HttpResponse {
         val response = httpClient.get("$OPENAI_API_URL/conversations/$conversationId/items") {
             header("Authorization", "Bearer $OPENAI_API_KEY")
-//            header("Content-Type", "application/json" )
-//            setBody(OpenAIMessageBody().getCreateConversastionBody( userMessage = "Hello!",
-//                systemMessage = "You are a helpful assistant.",
-//                developerMessage = "This is a demo conversation."))
         }
-
-//        val o = JSONObject(response.bodyAsText())
-//        this.conversationId = o.get("id").toString()
         return response
     }
 

@@ -3,7 +3,7 @@ package com.chat.openai.client
 import org.json.JSONArray
 import org.json.JSONObject
 
-class OpenAIMessageBody {
+class OpenAIConversationMessageBody {
 
     fun prepareMessageItem(message: String, role: String, type: String) : JSONObject {
        return  JSONObject().apply {
@@ -14,7 +14,7 @@ class OpenAIMessageBody {
 
     }
 
-    fun getCreateConversastionBody(userMessage: String, systemMessage: String, developerMessage: String) : String {
+    fun getCreateConversationBody(userMessage: String, systemMessage: String, developerMessage: String) : String {
         val items = JSONArray().apply {
             put(prepareMessageItem(type = "message", role = "user", message = userMessage))
             // Uncomment these when needed:
@@ -29,13 +29,3 @@ class OpenAIMessageBody {
         return x
     }
 }
-
-//"metadata": {"topic": "demo"},
-//"items": [
-//{
-//    "type": "message",
-//    "role": "user",
-//    "content": "Hello!"
-//}
-//]
-//}'
