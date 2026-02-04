@@ -1,9 +1,25 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
 //    alias(libs.plugins.kotlin.compose)
 }
+
+
+// Function to load properties from local.properties
+fun getLocalProperties(): Properties {
+    val properties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        properties.load(FileInputStream(localPropertiesFile))
+    }
+    return properties
+}
+
+val properties = getLocalProperties()
 
 android {
     namespace = "com.chat.purchasemcp"
@@ -18,6 +34,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildFeatures {
+        buildConfig = true
+    }
 
     buildTypes {
         release {
@@ -26,6 +45,18 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "OPENAI_API_KEY", "\"${properties.getProperty("OPENAI_API_KEY")}\"")
+            buildConfigField("String", "OPENAI_ORGANIZATION_ID", "\"${properties.getProperty("OPENAI_ORGANIZATION_ID")}\"")
+            buildConfigField("String", "OPENAI_PROJECT_ID", "\"${properties.getProperty("OPENAI_PROJECT_ID")}\"")
+            buildConfigField("String", "OPENAI_API_URL", "\"${properties.getProperty("OPENAI_API_URL")}\"")
+        }
+
+        debug {
+            buildConfigField("String", "OPENAI_API_KEY", "\"${properties.getProperty("OPENAI_API_KEY")}\"")
+            buildConfigField("String", "OPENAI_ORGANIZATION_ID", "\"${properties.getProperty("OPENAI_ORGANIZATION_ID")}\"")
+            buildConfigField("String", "OPENAI_PROJECT_ID", "\"${properties.getProperty("OPENAI_PROJECT_ID")}\"")
+            buildConfigField("String", "OPENAI_API_URL", "\"${properties.getProperty("OPENAI_API_URL")}\"")
+
         }
     }
     compileOptions {

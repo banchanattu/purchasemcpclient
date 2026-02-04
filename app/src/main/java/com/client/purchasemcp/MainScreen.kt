@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(onConnect: () -> Unit = {}) {
+fun MainScreen(onConnect: () -> Unit = {}, onChat: () -> Unit = {}) {
     val expanded = remember { mutableStateOf(false) }
 
     Scaffold(
@@ -43,6 +43,13 @@ fun MainScreen(onConnect: () -> Unit = {}) {
                             onClick = {
                                 expanded.value = false
                                 onConnect()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Chat") },
+                            onClick = {
+                                expanded.value = false
+                                onChat()
                             }
                         )
                     }
