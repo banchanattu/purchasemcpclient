@@ -6,8 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.rememberCoroutineScope
 import com.chat.mcp.client.PurchaseMcpClient
+import com.chat.openai.client.ConversationContent
+import com.chat.openai.client.ConversationItem
 import com.chat.openai.client.OpenAIClientConversations
 import com.chat.purchasemcp.BuildConfig
+import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.launch
 
 
@@ -58,6 +61,24 @@ class MainActivity : AppCompatActivity() {
                     getItems = {
                         scope.launch {
                             val response = openAiChat.getItems()
+                        }
+                    },
+                    createItems = {
+                        scope.launch {
+                            val l : List<ConversationItem> = listOf(
+                                ConversationItem(
+                                    type = "message",
+                                    role = "user",
+                                    content = ConversationContent(
+                                        type = "input_text",
+                                        text = "Hello"
+                                    )
+                                )
+                            )
+                            val response = openAiChat.createItems(l)
+                            response.onSuccess {
+                                println(it.bodyAsText())
+                            }
                         }
                     }
                 )

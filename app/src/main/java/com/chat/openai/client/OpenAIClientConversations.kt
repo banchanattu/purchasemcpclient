@@ -127,7 +127,9 @@ class OpenAIClientConversations {
      */
     suspend fun retrieveConversation(): Result<HttpResponse> = runCatching {
         requireConversationId()
-        httpClient.get("$OPENAI_API_URL/conversations/$conversationId")
+        httpClient.get("$OPENAI_API_URL/conversations/$conversationId") {
+
+        }
     }
 
     /**
@@ -167,6 +169,8 @@ class OpenAIClientConversations {
     suspend fun createItems( items : List<ConversationItem>) : Result<HttpResponse> = runCatching {
         requireConversationId()
         httpClient.post("$OPENAI_API_URL/conversations/$conversationId/items") {
+            contentType(ContentType.Application.Json)
+            header("Accept", "application/json")
             setBody(createConversationPayload(items))
         }
     }

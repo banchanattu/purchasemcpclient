@@ -27,7 +27,8 @@ fun MainScreen(onConnect: () -> Unit = {},
                onChat: () -> Unit = {},
                retrieveChat: () -> Unit = {},
                deleteChat: () -> Unit = {},
-               getItems: () -> Unit = {}) {
+               getItems: () -> Unit = {},
+               createItems: () -> Unit = {}) {
     val expanded = remember { mutableStateOf(false) }
 
     Scaffold(
@@ -75,6 +76,13 @@ fun MainScreen(onConnect: () -> Unit = {},
                             onClick = {
                                 expanded.value = false
                                 getItems()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Retrieve Chat") },
+                            onClick = {
+                                expanded.value = false
+                                createItems()
                             }
                         )
                     }

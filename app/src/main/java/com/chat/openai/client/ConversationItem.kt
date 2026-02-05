@@ -1,5 +1,6 @@
 package com.chat.openai.client
 
+import kotlinx.serialization.Serializable
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -9,6 +10,7 @@ import org.json.JSONObject
  * @property type The type of content (e.g., "text", "image")
  * @property text The actual text content
  */
+@Serializable
 data class ConversationContent(
     val type: String,
     val text: String
@@ -21,6 +23,7 @@ data class ConversationContent(
  * @property role The role of the message sender (e.g., "user", "assistant")
  * @property content The content of the conversation item
  */
+@Serializable
 data class ConversationItem(
     val type: String,
     val role: String,
@@ -37,9 +40,12 @@ fun ConversationItem.toJson(): JSONObject {
     return JSONObject().apply {
         put("type", type)
         put("role", role)
-        put("content", JSONObject().apply {
-            put("type", content.type)
-            put("text", content.text)
+        put("content", JSONArray().apply {
+            put(JSONObject().apply {
+
+                put("type", content.type)
+                put("text", content.text)
+            })
         })
     }
 }
@@ -50,14 +56,14 @@ fun ConversationItem.toJson(): JSONObject {
  * @param items The list of conversation items to convert
  * @return JSONObject with an "items" array containing all conversation items
  */
-fun createConversationPayload(items: List<ConversationItem>): JSONObject {
+fun createConversationPayload(items: List<ConversationItem>): String {
     val jsonArray = JSONArray().apply {
         items.forEach { item ->
             put(item.toJson())
         }
     }
 
-    return JSONObject().apply {
+    return  JSONObject().apply {
         put("items", jsonArray)
-    }
+    }.toString()
 }
