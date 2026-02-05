@@ -65,21 +65,21 @@ fun MainScreen(onConnect: () -> Unit = {},
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Retrieve Chat") },
+                            text = { Text("Delete Chat") },
                             onClick = {
                                 expanded.value = false
                                 deleteChat()
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Retrieve Chat") },
+                            text = { Text("Get Chat items") },
                             onClick = {
                                 expanded.value = false
                                 getItems()
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Retrieve Chat") },
+                            text = { Text("Create Chat") },
                             onClick = {
                                 expanded.value = false
                                 createItems()
