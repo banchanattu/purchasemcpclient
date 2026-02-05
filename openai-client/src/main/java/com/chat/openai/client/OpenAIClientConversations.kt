@@ -1,6 +1,5 @@
 package com.chat.openai.client
 
-import com.chat.purchasemcp.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.cio.endpoint
@@ -30,14 +29,13 @@ import org.json.JSONObject
  * This class provides methods to create, retrieve, delete conversations
  * and manage conversation items through the OpenAI API.
  */
-class OpenAIClientConversations {
-
+class OpenAIClientConversations(
+        private val OPENAI_API_KEY : String, //: String = BuildConfig.OPENAI_API_KEY
+        private val PROJECT_ID: String, //: String = BuildConfig.OPENAI_PROJECT_ID
+        private val OPENAI_API_URL: String//: String = BuildConfig.OPENAI_API_URL
+    ) {
     // Configuration
     private companion object {
-        private val OPENAI_API_KEY: String = BuildConfig.OPENAI_API_KEY
-        private val PROJECT_ID: String = BuildConfig.OPENAI_PROJECT_ID
-        private val OPENAI_API_URL: String = BuildConfig.OPENAI_API_URL
-
         private const val CONNECT_TIMEOUT = 10_000L
         private const val REQUEST_TIMEOUT = 30_000L
     }

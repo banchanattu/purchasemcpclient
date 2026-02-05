@@ -18,11 +18,16 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private val purchaseMCPClient: PurchaseMcpClient = PurchaseMcpClient()
-    private val openAiChat : OpenAIClientConversations = OpenAIClientConversations()
-
-    private val openaiApiKey = BuildConfig.OPENAI_API_KEY
     private val openaiOrganizationId = BuildConfig.OPENAI_ORGANIZATION_ID
-    private val openaiProjectId = BuildConfig.OPENAI_PROJECT_ID
+    private val projectID = BuildConfig.OPENAI_PROJECT_ID
+    private val openAiChat : OpenAIClientConversations = OpenAIClientConversations(
+        OPENAI_API_KEY = BuildConfig.OPENAI_API_KEY,
+        PROJECT_ID = projectID,
+        OPENAI_API_URL = "https://api.openai.com/v1/"
+    )
+
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

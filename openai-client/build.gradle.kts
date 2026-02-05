@@ -17,6 +17,11 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -40,10 +45,19 @@ android {
 }
 
 dependencies {
+    // Add these Ktor dependencies
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.cio)
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // Kotlinx serialization
+    implementation(libs.kotlinx.serialization.json)
 }
