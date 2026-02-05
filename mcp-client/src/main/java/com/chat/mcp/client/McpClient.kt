@@ -21,8 +21,8 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.readUTF8Line
 import kotlinx.serialization.json.Json
-import org.jetbrains.kotlinx.mcp.client.Client
-import org.jetbrains.kotlinx.mcp.Implementation
+//import org.jetbrains.kotlinx.mcp.client.Client
+//import org.jetbrains.kotlinx.mcp.Implementation
 import org.json.JSONArray
 import org.json.JSONObject
 

@@ -139,4 +139,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(project(":mcp-client"))
+    implementation(project(":openai-client"))
+
 }

@@ -27,3 +27,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "purchaseMCP"
 include(":app")
+include(":mcp-client")
+include(":openai-client")
