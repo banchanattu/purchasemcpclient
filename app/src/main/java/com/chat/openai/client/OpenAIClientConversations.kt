@@ -175,6 +175,24 @@ class OpenAIClientConversations {
         }
     }
 
+
+    /**
+     * Get item for  the current conversation.
+     *
+     * @return Result containing the HttpResponse or error
+     * @throws IllegalStateException if no conversation ID is set
+     */
+    suspend fun retrieveItem( itemId : String) : Result<HttpResponse> = runCatching {
+        requireConversationId()
+        httpClient.get("$OPENAI_API_URL/conversations/$conversationId/items/$itemId") {
+            contentType(ContentType.Application.Json)
+            header("Accept", "application/json")
+
+        }
+    }
+
+
+
     /**
      * Gets the current conversation ID.
      *
