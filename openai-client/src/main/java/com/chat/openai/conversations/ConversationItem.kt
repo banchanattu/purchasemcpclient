@@ -1,4 +1,4 @@
-package com.chat.openai.client
+package com.chat.openai.conversations
 
 import kotlinx.serialization.Serializable
 import org.json.JSONArray

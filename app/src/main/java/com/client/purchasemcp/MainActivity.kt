@@ -6,9 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.rememberCoroutineScope
 import com.chat.mcp.client.PurchaseMcpClient
-import com.chat.openai.client.ConversationContent
-import com.chat.openai.client.ConversationItem
-import com.chat.openai.client.OpenAIClientConversations
+import com.chat.openai.conversations.ConversationContent
+import com.chat.openai.conversations.ConversationItem
+import com.chat.openai.conversations.OpenAIClientConversations
 import com.chat.purchasemcp.BuildConfig
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.launch

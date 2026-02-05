@@ -1,4 +1,4 @@
-package com.chat.openai.client
+package com.chat.openai.conversations
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO

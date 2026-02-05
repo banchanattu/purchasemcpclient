@@ -1,4 +1,4 @@
-package com.chat.openai.client
+package com.chat.openai
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

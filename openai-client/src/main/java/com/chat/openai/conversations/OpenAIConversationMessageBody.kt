@@ -1,4 +1,4 @@
-package com.chat.openai.client
+package com.chat.openai.conversations
 
 import org.json.JSONArray
 import org.json.JSONObject
