@@ -68,10 +68,6 @@ android {
         compose = true
     }
 
-    // ADD THIS BLOCK - Required for Compose
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"  // Compatible with Kotlin 1.9.x
-    }
 }
 
 kotlin {
@@ -113,6 +109,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     // Optional but useful
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -141,5 +138,7 @@ dependencies {
 
     implementation(project(":mcp-client"))
     implementation(project(":openai-client"))
+    implementation(project(":chat-screen"))
+
 
 }

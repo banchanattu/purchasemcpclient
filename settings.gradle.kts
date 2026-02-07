@@ -29,3 +29,4 @@ rootProject.name = "purchaseMCP"
 include(":app")
 include(":mcp-client")
 include(":openai-client")
+include(":chat-screen")

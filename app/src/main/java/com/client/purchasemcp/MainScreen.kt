@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.chat.chat_screen.ChatScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,6 +127,7 @@ fun MainScreen(onConnect: () -> Unit = {},
             contentAlignment = Alignment.Center
         ) {
             Text("Main content centered", style = MaterialTheme.typography.bodyLarge)
+            ChatScreen()
         }
     }
 }
