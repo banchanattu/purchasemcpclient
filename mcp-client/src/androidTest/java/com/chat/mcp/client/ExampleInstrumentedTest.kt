@@ -23,12 +23,20 @@ class ExampleInstrumentedTest {
     }
 
 
+    @Test
+    fun compareOldAndNewInitialize(){
+        val old = McpMessageBody().rpc("initialize")
+        assertNotNull(old)
+        val new =McpMessage().prepareMcpMessageRpc(method = "initialize", 0 )
+        assertEquals(old,new)
+    }
 
     @Test
     fun compareOldAndNewToolList(){
-        val old = McpMessageBody().rpc("tools/list")
+        val old = McpMessageBody().rpc("tools/list").replace("\\/", "/")
+
         assertNotNull(old)
-        val new =prepareMcpMessageRpc(method = "tools/list", 0 )
+        val new =McpMessage().prepareMcpMessageRpc(method = "tools/list", 0 )
         assertEquals(old,new)
     }
 
