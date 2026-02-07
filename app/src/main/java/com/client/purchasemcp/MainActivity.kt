@@ -20,15 +20,25 @@ class MainActivity : AppCompatActivity() {
 
     private val purchaseMCPClient: PurchaseMcpClient = PurchaseMcpClient()
     private val openaiOrganizationId = BuildConfig.OPENAI_ORGANIZATION_ID
-    private val projectID = BuildConfig.OPENAI_PROJECT_ID
+   // private val projectID = BuildConfig.OPENAI_PROJECT_ID
+
+    companion object {
+        val OPENAI_API_KEY = BuildConfig.OPENAI_API_KEY
+        val PROJECT_ID = BuildConfig.OPENAI_PROJECT_ID
+        val OPENAI_API_URL = "https://api.openai.com/v1/"
+    }
+
+//    public val OPENAI_API_KEY = BuildConfig.OPENAI_API_KEY
+//    public val PROJECT_ID = BuildConfig.OPENAI_PROJECT_ID
+//    public val OPENAI_API_URL = "https://api.openai.com/v1/"
     private val openAiChat : OpenAIClientConversations = OpenAIClientConversations(
         OPENAI_API_KEY = BuildConfig.OPENAI_API_KEY,
-        PROJECT_ID = projectID,
+        PROJECT_ID = PROJECT_ID,
         OPENAI_API_URL = "https://api.openai.com/v1/"
     )
     private val openAiResponse : OpenAiResponse = OpenAiResponse(
         openAiApiKey = BuildConfig.OPENAI_API_KEY,
-        projectId = projectID,
+        projectId = PROJECT_ID,
         openAiApiUrl = "https://api.openai.com/v1"
     )
 

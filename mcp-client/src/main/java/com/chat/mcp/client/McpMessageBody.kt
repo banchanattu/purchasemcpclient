@@ -2,6 +2,7 @@ package com.chat.mcp.client
 
 import org.json.JSONObject
 
+@Deprecated("Use McpMessage instead")
 class McpMessageBody {
     private val bodyJson: JSONObject = JSONObject()
 

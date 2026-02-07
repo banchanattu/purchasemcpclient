@@ -1,5 +1,6 @@
 package com.chat.chat_screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,23 +13,45 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.chat.mcp.client.McpTool
 import com.chat.mcp.client.PurchaseMcpClient
+import com.chat.mcp.client.ToolsListResponse
+import com.chat.openai.client.BuildConfig
+import com.chat.openai.response.OpenAiResponse
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+
+private var mcpClient : PurchaseMcpClient = PurchaseMcpClient()
+
+suspend fun  getToolList() : Result<ToolsListResponse> {
+    return runCatching {
+        if (!mcpClient.isInitialized()) {
+            mcpClient.initialize()
+        }
+        mcpClient.getToolsAsList()
+    }
+}
+
+private val openAiResponse : OpenAiResponse = OpenAiResponse(
+
+    openAiApiKey = BuildConfig.OPENAI_API_KEY,
+    projectId = projectID,
+    openAiApiUrl = "https://api.openai.com/v1"
+)
+
 
 @Composable
 fun ChatScreen() {
     var userInput by remember { mutableStateOf("") }
     var chatMessages by remember { mutableStateOf(listOf<String>()) }
-    var toolList: List<McpTool>  = emptyList()
+    var toolList : ToolsListResponse by remember { mutableStateOf(ToolsListResponse(emptyList())) }
 
-    val mcpClient: PurchaseMcpClient = PurchaseMcpClient()
+
     LaunchedEffect(Unit) {
-       runCatching {
-           mcpClient.initialize()
-           toolList = mcpClient.getToolsAsList()
-       }
+        getToolList().onSuccess {
+            toolList = it
+        }.onFailure {
+            Log.e("MCP", "Error getting tool list: ${it.message}")
+        }
     }
     Column(
         modifier = Modifier
@@ -78,6 +101,7 @@ fun ChatScreen() {
                 onClick = {
                     if (userInput.isNotBlank()) {
                         chatMessages = chatMessages + userInput
+
                         userInput = ""
                     }
                 }

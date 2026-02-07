@@ -95,6 +95,10 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
         return sessionId
     }
 
+    fun isInitialized(): Boolean {
+        return this.sessionId.isNotEmpty()
+    }
+
 
 
 

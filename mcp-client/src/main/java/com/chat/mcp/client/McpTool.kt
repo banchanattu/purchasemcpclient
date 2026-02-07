@@ -13,6 +13,24 @@ data class ToolsListResponse(
     val tools: List<Tool>
 )
 
+/**
+ * Internal wrapper for JSON-RPC response
+ */
+@Serializable
+private data class McpRpcResponse(
+    val jsonrpc: String = "2.0",
+    val id: JsonElement? = null,
+    val result: ToolsListResponse? = null,
+    val error: McpError? = null
+)
+
+@Serializable
+private data class McpError(
+    val code: Int,
+    val message: String,
+    val data: JsonElement? = null
+)
+
 // Tool definition
 @Serializable
 data class Tool(
@@ -58,7 +76,8 @@ data class PropertySchema(
  */
 fun parseToolsList(jsonString: String): ToolsListResponse {
     return try {
-        json.decodeFromString<ToolsListResponse>(jsonString)
+        val response = json.decodeFromString<McpRpcResponse>(jsonString)
+        response.result ?: throw McpParseException("Response missing result or contains error: ${response.error}")
     } catch (e: SerializationException) {
         throw McpParseException("Failed to parse tools list: ${e.message}", e)
     } catch (e: IllegalArgumentException) {
@@ -82,7 +101,8 @@ class McpParseException(message: String, cause: Throwable? = null) : Exception(m
  */
 fun parseToolsListOrNull(jsonString: String): ToolsListResponse? {
     return try {
-        json.decodeFromString<ToolsListResponse>(jsonString)
+        val response = json.decodeFromString<McpRpcResponse>(jsonString)
+        response.result
     } catch (e: Exception) {
         null
     }
@@ -93,7 +113,6 @@ fun parseToolsListOrNull(jsonString: String): ToolsListResponse? {
  * Version with Result type for better error handling
  */
 fun parseToolsListResult(jsonString: String): ToolsListResponse {
-    //return runCatching {
-      return   json.decodeFromString<ToolsListResponse>(jsonString)
-   // }
+    val response = json.decodeFromString<McpRpcResponse>(jsonString)
+    return response.result ?: throw McpParseException("Response missing result or contains error: ${response.error}")
 }
