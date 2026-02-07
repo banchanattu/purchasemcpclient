@@ -27,9 +27,9 @@ class MainActivity : AppCompatActivity() {
         OPENAI_API_URL = "https://api.openai.com/v1/"
     )
     private val openAiResponse : OpenAiResponse = OpenAiResponse(
-        OPENAI_API_KEY = BuildConfig.OPENAI_API_KEY,
-        PROJECT_ID = projectID,
-        OPENAI_API_URL = "https://api.openai.com/v1"
+        openAiApiKey = BuildConfig.OPENAI_API_KEY,
+        projectId = projectID,
+        openAiApiUrl = "https://api.openai.com/v1"
     )
 
 
