@@ -2,7 +2,6 @@ package com.chat.mcp.client
 
 import android.util.Log
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -113,7 +112,7 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
      * This method creates a new MCP session and retrieves the session ID.
      * @return The session ID as a String
      */
-    suspend fun createSession(): String {
+    suspend fun initialize(): String {
         Log.d("MCP", "Creating session...")
 
         val response: HttpResponse = httpClient.post("$baseUrl/mcp") {
@@ -196,7 +195,7 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
      */
     suspend fun connect() {
         try {
-            sessionId = createSession()
+            sessionId = initialize()
             toolList = getToolsAsList()
             val o = runTool("UpdateStore",5, "id" to "402", "storeName" to "Bobby Store 1", "storeDesc" to "Local Purchase")
             val x = disconnect()
