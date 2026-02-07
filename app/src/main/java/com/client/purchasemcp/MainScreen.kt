@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -28,8 +29,11 @@ fun MainScreen(onConnect: () -> Unit = {},
                retrieveChat: () -> Unit = {},
                deleteChat: () -> Unit = {},
                getItems: () -> Unit = {},
-               createItems: () -> Unit = {}) {
+               createItems: () -> Unit = {},
+               onCreateResponse: () -> Unit = {},
+               onResponse: () -> Unit = {}) {
     val expanded = remember { mutableStateOf(false) }
+    val seetingEexpanded = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -86,6 +90,30 @@ fun MainScreen(onConnect: () -> Unit = {},
                             }
                         )
                     }
+                    // Second icon - for example, a settings icon
+                    IconButton(onClick = { seetingEexpanded.value = true }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    }
+                    DropdownMenu(
+                        expanded = seetingEexpanded.value,
+                        onDismissRequest = { seetingEexpanded.value = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Create Response") },
+                            onClick = {
+                                seetingEexpanded.value = false
+                                onCreateResponse()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Create Response") },
+                            onClick = {
+                                seetingEexpanded.value = false
+                                onResponse()
+                            }
+                        )
+                    }
+
                 }
             )
         }

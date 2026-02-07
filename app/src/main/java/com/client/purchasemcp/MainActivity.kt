@@ -9,6 +9,7 @@ import com.chat.mcp.client.PurchaseMcpClient
 import com.chat.openai.conversations.ConversationContent
 import com.chat.openai.conversations.ConversationItem
 import com.chat.openai.conversations.OpenAIClientConversations
+import com.chat.openai.response.OpenAiResponse
 import com.chat.purchasemcp.BuildConfig
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.launch
@@ -25,6 +26,12 @@ class MainActivity : AppCompatActivity() {
         PROJECT_ID = projectID,
         OPENAI_API_URL = "https://api.openai.com/v1/"
     )
+    private val openAiResponse : OpenAiResponse = OpenAiResponse(
+        OPENAI_API_KEY = BuildConfig.OPENAI_API_KEY,
+        PROJECT_ID = projectID,
+        OPENAI_API_URL = "https://api.openai.com/v1"
+    )
+
 
 
 
@@ -81,6 +88,42 @@ class MainActivity : AppCompatActivity() {
                                 )
                             )
                             val response = openAiChat.createItems(l)
+                            response.onSuccess {
+                                println(it.bodyAsText())
+                            }
+                        }
+                    },
+                    onCreateResponse = {
+                        scope.launch {
+                            val l : List<ConversationItem> = listOf(
+                                ConversationItem(
+                                    type = "message",
+                                    role = "user",
+                                    content = ConversationContent(
+                                        type = "input_text",
+                                        text = "Hello"
+                                    )
+                                )
+                            )
+                            val response = openAiResponse.createResponse("How high is everest?")
+                            response.onSuccess {
+                                println(it.bodyAsText())
+                            }
+                        }
+                    },
+                    onResponse = {
+                        scope.launch {
+                            val l : List<ConversationItem> = listOf(
+                                ConversationItem(
+                                    type = "message",
+                                    role = "user",
+                                    content = ConversationContent(
+                                        type = "input_text",
+                                        text = "Hello"
+                                    )
+                                )
+                            )
+                            val response = openAiResponse.getResponse()
                             response.onSuccess {
                                 println(it.bodyAsText())
                             }

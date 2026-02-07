@@ -1,4 +1,4 @@
-//package com.chat.openai.conversations
+package com.chat.openai
 //
 //import org.junit.Test
 //
