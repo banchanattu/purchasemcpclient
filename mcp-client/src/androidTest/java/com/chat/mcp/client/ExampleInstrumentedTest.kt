@@ -21,4 +21,16 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.chat.mcp.client.test", appContext.packageName)
     }
+
+
+
+    @Test
+    fun compareOldAndNewToolList(){
+        val old = McpMessageBody().rpc("tools/list")
+        assertNotNull(old)
+        val new =prepareMcpMessageRpc(method = "tools/list", 0 )
+        assertEquals(old,new)
+    }
+
+
 }

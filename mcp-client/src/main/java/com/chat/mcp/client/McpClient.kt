@@ -20,16 +20,13 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.readUTF8Line
 import kotlinx.serialization.json.Json
-//import org.jetbrains.kotlinx.mcp.client.Client
-//import org.jetbrains.kotlinx.mcp.Implementation
-import org.json.JSONArray
-import org.json.JSONObject
+
 
 
 class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080") {
 
     private var sessionId: String = ""
-    private var toolList: List<McpTool> = emptyList()
+    private var toolList: ToolsListResponse = ToolsListResponse(emptyList())
     private val httpClient: HttpClient = HttpClient(CIO) {
         install(WebSockets)
         install(ContentNegotiation) {
@@ -48,48 +45,11 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
         }
     }
 
-//    /** Define a MCP client **/
-//    val client = Client(
-//        clientInfo = Implementation(
-//            name = "purchase-mcp-client",
-//            version = "1.0.0"
-//        )
-//    )
-
-
-    /** This is an internal method to parse the tools from the JSON response
-     *  @param jsonObject The JSON object containing the tools information
-     *  @return A list of McpTool objects
-     */
-    private fun getToolsAsList(jsonObject: JSONObject): List<McpTool> {
-        // 1. Parse the string into a generic JsonObject
-
-
-        // 2. Navigate the hierarchy: result -> tools
-        val result: JSONObject = jsonObject.get("result") as JSONObject
-        val toolsArray = result.get("tools") as? JSONArray
-        val toolsList = mutableListOf<McpTool>()
-        (0 until (toolsArray?.length() ?: 0)).forEach { i ->
-            val tool = toolsArray?.getJSONObject(i)
-            val mcpTool = McpTool(
-                name = tool?.getString("name") ?: "",
-                description = tool?.getString("description") ?: "",
-                inputSchema = tool?.getJSONObject("inputSchema") ?: JSONObject()
-            )
-            toolsList.add(mcpTool)
-
-        }
-        // 3. Convert the JsonArray into a List<JsonObject>
-        return toolsList
-    }
-
-
-
     /** This is an internal method to read the data from the HTTP response body
      *  @param response The HTTP response object
      *  @return A JSONObject containing the data
      */
-    private suspend fun  getDataFromBody(response: HttpResponse): JSONObject {
+    private suspend fun  getDataFromBody(response: HttpResponse): String {
         val channel = response.bodyAsChannel()
         while (!channel.isClosedForRead) {
             val line = channel.readUTF8Line() ?: break
@@ -97,13 +57,13 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
             if (line.startsWith("data:")) {
                 val jsonString = line.removePrefix("data:").trim()
                 // Use your favorite JSON library (Gson/Kotlinx.Serialization)
-                val mcpResponse = JSONObject(jsonString)
+               // val mcpResponse = JSONObject(jsonString)
 
-                return mcpResponse
+                return jsonString
             }
 
         }
-        return JSONObject()
+        return ""
     }
 
 
@@ -145,7 +105,7 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
      * This method retrieves the list of available tools from the MCP server.
      * @return A list of McpTool objects
      */
-    suspend fun getToolsAsList(): List<McpTool>  {
+    suspend fun getToolsAsList(): ToolsListResponse  {
         Log.d("MCP", "Creating session...")
 
         val response: HttpResponse = httpClient.post("$baseUrl/mcp") {
@@ -160,7 +120,7 @@ class PurchaseMcpClient(private val baseUrl: String = "http://192.168.1.147:8080
             header("mcp-session-id", this@PurchaseMcpClient.sessionId)
             setBody(McpMessageBody().rpc("tools/list"))
         }
-        return getToolsAsList(getDataFromBody(response))
+        return parseToolsListResult(getDataFromBody(response))
     }
 
 

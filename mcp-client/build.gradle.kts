@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)  // ADD THIS
 }
 
 android {
@@ -11,6 +12,8 @@ android {
 
     defaultConfig {
         minSdk = 24
+        // ADD THIS LINE - crucial for instrumented tests
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -35,5 +38,16 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.cio)
     // Kotlinx serialization
-    implementation(libs.kotlinx.serialization.json)
+//    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.junit.ktx)
+
+
+    // CORRECT test dependencies
+    testImplementation(libs.junit.v4132)
+    androidTestImplementation(libs.androidx.junit.v115)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.espresso.core.v351)
+
+    implementation(libs.kotlinx.serialization.json.v163)
 }
