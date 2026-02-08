@@ -1,11 +1,20 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 }
 
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+
 android {
-    namespace = "com.chat.openai.client"
+    namespace = "com.chat.mcp.appsetting"
     compileSdk = 36
 
     defaultConfig {
@@ -13,12 +22,16 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties.getProperty("OPENAI_API_KEY") ?: ""}\"")
+        buildConfigField("String", "OPENAI_ORGANIZATION_ID", "\"${localProperties.getProperty("OPENAI_ORGANIZATION_ID") ?: ""}\"")
+        buildConfigField("String", "OPENAI_PROJECT_ID", "\"${localProperties.getProperty("OPENAI_PROJECT_ID") ?: ""}\"")
+        buildConfigField("String", "OPENAI_API_URL", "\"${localProperties.getProperty("OPENAI_API_URL") ?: "https://api.openai.com/v1/"}\"")
     }
 
     buildFeatures {
         buildConfig = true
     }
-
 
     buildTypes {
         release {
@@ -36,26 +49,16 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
-            // If you have other args, they move here too:
-            // freeCompilerArgs.add("-Xjsr305=strict")
         }
     }
 }
 
 dependencies {
-    // Use api instead of implementation because HttpResponse is exposed in public API
-    api(libs.ktor.client.cio)
-    api(libs.ktor.client.content.negotiation)
-    api(libs.ktor.serialization.kotlinx.json)
-    api(libs.ktor.client.logging)
-
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.runtime)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    // Kotlinx serialization
-    implementation(libs.kotlinx.serialization.json)
+    androidTestImplementation(libs.androidx.junit.v115)
+    androidTestImplementation(libs.androidx.espresso.core.v351)
 }

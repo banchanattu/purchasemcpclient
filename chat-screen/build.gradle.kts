@@ -67,6 +67,7 @@ android {
         implementation(libs.androidx.compose.ui.tooling.preview)
         implementation(project(":mcp-client"))
         implementation(project(":openai-client"))
+        implementation(project(":mcp-setting"))
 
     }
 }

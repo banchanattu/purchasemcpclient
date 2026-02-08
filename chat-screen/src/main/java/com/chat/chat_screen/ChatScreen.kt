@@ -9,16 +9,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.chat.mcp.appsetting.LocalAppSettings
 import com.chat.mcp.client.PurchaseMcpClient
 import com.chat.mcp.client.ToolsListResponse
-import com.chat.openai.client.BuildConfig
 import com.chat.openai.response.OpenAiResponse
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+
 
 private var mcpClient : PurchaseMcpClient = PurchaseMcpClient()
 
@@ -31,19 +30,17 @@ suspend fun  getToolList() : Result<ToolsListResponse> {
     }
 }
 
-private val openAiResponse : OpenAiResponse = OpenAiResponse(
-
-    openAiApiKey = BuildConfig.OPENAI_API_KEY,
-    projectId = projectID,
-    openAiApiUrl = "https://api.openai.com/v1"
-)
-
 
 @Composable
 fun ChatScreen() {
     var userInput by remember { mutableStateOf("") }
     var chatMessages by remember { mutableStateOf(listOf<String>()) }
     var toolList : ToolsListResponse by remember { mutableStateOf(ToolsListResponse(emptyList())) }
+    val openAiResponse : OpenAiResponse = OpenAiResponse(openAiApiKey = LocalAppSettings.current.OPENAI_API_KEY,
+        projectId = LocalAppSettings.current.PROJECT_ID,
+        openAiApiUrl = LocalAppSettings.current.OPENAI_API_URL
+    )
+    val scope = rememberCoroutineScope()
 
 
     LaunchedEffect(Unit) {
@@ -101,7 +98,9 @@ fun ChatScreen() {
                 onClick = {
                     if (userInput.isNotBlank()) {
                         chatMessages = chatMessages + userInput
-
+                        scope.launch {
+                            openAiResponse.createResponse (userInput)
+                        }
                         userInput = ""
                     }
                 }
